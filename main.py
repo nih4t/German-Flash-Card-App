@@ -1,6 +1,5 @@
 import tkinter as tk
 import pandas as pd
-import random
 
 german_word = ""
 english_translation = ""
@@ -27,21 +26,14 @@ def flip_positive():
     canvas.itemconfig(word_text, text=english_translation, fill="white")
     canvas.update()
 
-def new_card():
-    global timer_id
-    # Cancel the previous timer if it exists
-    if timer_id is not None:
-        window.after_cancel(timer_id)
-    chose_word()
-    timer_id = window.after(3000, flip_positive)  # Set new timer and save its ID
 
 def learned():
-    new_card()
+    chose_word()
 
 def not_learned():
-    new_card()
+    chose_word()
 
-# Setup the UI
+# Set up the UI
 window = tk.Tk()
 window.title("Flash Cards")
 window.config(bg=BACKGROUND_COLOR, pady=50, padx=50)
@@ -49,12 +41,16 @@ window.config(bg=BACKGROUND_COLOR, pady=50, padx=50)
 canvas = tk.Canvas(window, height=526, width=800, highlightthickness=0, bg=BACKGROUND_COLOR)
 image_front = tk.PhotoImage(file="./images/card_front.png")
 card = canvas.create_image(410, 263, image=image_front)
-canvas.grid(column=0, row=0, columnspan=2)
+canvas.grid(column=0, row=0, columnspan=3)
 language_text = canvas.create_text(410, 160, text="German", fill="black", font=("Arial", 28, "italic"))
 
 image_right = tk.PhotoImage(file="./images/right.png")
 right_button = tk.Button(window, image=image_right, command=learned, highlightthickness=0, borderwidth=0)
-right_button.grid(column=1, row=1)
+right_button.grid(column=2, row=1)
+
+image_flip = tk.PhotoImage(file="./images/flip.png",)
+flip_button = tk.Button(window, image=image_flip, command=flip_positive, bg=BACKGROUND_COLOR, highlightthickness=0, borderwidth=0)
+flip_button.grid(column=1, row=1)
 
 image_wrong = tk.PhotoImage(file="./images/wrong.png")
 wrong_button = tk.Button(window, image=image_wrong, command=not_learned, highlightthickness=0, borderwidth=0)
@@ -66,7 +62,7 @@ word_text = canvas.create_text(410, 263, text="", fill="black", font=("Arial", 5
 data = pd.read_csv("./data/de.csv")
 
 # Start with a new card
-new_card()
+chose_word()
 
 # Start the Tkinter event loop
 window.mainloop()
